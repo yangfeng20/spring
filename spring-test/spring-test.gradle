@@ -8,6 +8,8 @@ dependencyManagement {
 }
 
 dependencies {
+	// 添加lombok依赖
+	compile group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
 	compile(project(":spring-core"))
 	optional(project(":spring-aop"))
 	optional(project(":spring-beans"))
