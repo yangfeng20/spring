@@ -1,4 +1,4 @@
-package com.maple;
+package com.maple.bootstrap;
 
 import com.maple.application.MapleClassPathXmlApplicationContext;
 import org.springframework.context.ApplicationContext;
@@ -10,7 +10,7 @@ import org.springframework.context.ApplicationContext;
  */
 
 
-public class SpringTest {
+public class XmlBootStrap {
 
 	public static void main(String[] args) {
 		ApplicationContext applicationContext = new MapleClassPathXmlApplicationContext("classpath:spring-bean.xml");
