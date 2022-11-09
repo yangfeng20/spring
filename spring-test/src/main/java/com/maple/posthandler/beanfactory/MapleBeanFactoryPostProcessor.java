@@ -2,6 +2,7 @@ package com.maple.posthandler.beanfactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -17,6 +18,11 @@ public class MapleBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 	public void postProcessBeanFactory(@NotNull ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		BeanDefinition studentDefinition = beanFactory.getBeanDefinition("student");
 		System.out.println("beanDefinition后置处理执行");
-		studentDefinition.setAttribute("name", "update");
+
+		// bean实例的字段属性在 beanDefinition 的MutablePropertyValues对象中，只需要添加进这个List即可
+		MutablePropertyValues values = studentDefinition.getPropertyValues();
+		values.add("name", "update");
+
+
 	}
 }
