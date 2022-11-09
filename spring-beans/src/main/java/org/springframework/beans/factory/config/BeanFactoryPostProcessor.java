@@ -37,6 +37,8 @@ import org.springframework.beans.BeansException;
  * If bean instance interaction is required, consider implementing
  * {@link BeanPostProcessor} instead.
  *
+ * <p>maple: 用于对BeanDefinition对象进行后置处理
+ *
  * @author Juergen Hoeller
  * @since 06.07.2003
  * @see BeanPostProcessor

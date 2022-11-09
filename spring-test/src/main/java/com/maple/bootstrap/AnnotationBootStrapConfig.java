@@ -2,6 +2,7 @@ package com.maple.bootstrap;
 
 import com.maple.entity.Student;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 
 @SuppressWarnings("all")
 @Configuration
+@ComponentScan("com.maple")
 public class AnnotationBootStrapConfig {
 
 
