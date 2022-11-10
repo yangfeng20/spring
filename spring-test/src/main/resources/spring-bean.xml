@@ -7,17 +7,17 @@
 <!--	&lt;!&ndash;使用组件扫描器： 指定扫描的包&ndash;&gt;-->
 <!--	<context:component-scan base-package="com.maple.entity"/>-->
 
-	<!--注册beanDefinition的后置处理器-->
-	<bean id="mapleBeanFactoryPostProcessor" class="com.maple.posthandler.beanfactory.MapleBeanFactoryPostProcessor"/>
+<!--	&lt;!&ndash;注册beanDefinition的后置处理器&ndash;&gt;-->
+<!--	<bean id="mapleBeanFactoryPostProcessor" class="com.maple.posthandler.beanfactory.MapleBeanFactoryPostProcessor"/>-->
 
-	<!--注册bean对象的后置处理器-->
-	<bean id="mapleBeanPostProcessor" class="com.maple.posthandler.bean.MapleBeanPostProcessor"/>
+<!--	&lt;!&ndash;注册bean对象的后置处理器&ndash;&gt;-->
+<!--	<bean id="mapleBeanPostProcessor" class="com.maple.posthandler.bean.MapleBeanPostProcessor"/>-->
 
 	<bean id="student" class="com.maple.entity.Student" init-method="init">
 		<property name="name" value="李四"/>
 		<property name="age" value="15"/>
 	</bean>
 
-	<bean class="com.maple.entity.StudentFactoryBean" id="studentFactoryBean"/>
+	<!--<bean class="com.maple.entity.StudentFactoryBean" id="studentFactoryBean"/>-->
 
 </beans>

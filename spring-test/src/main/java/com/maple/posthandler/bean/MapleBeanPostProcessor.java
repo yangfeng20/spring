@@ -2,7 +2,6 @@ package com.maple.posthandler.bean;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 
@@ -12,7 +11,7 @@ import java.lang.reflect.Field;
  * @Description:
  */
 
-@Component
+//@Component
 public class MapleBeanPostProcessor implements BeanPostProcessor {
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {

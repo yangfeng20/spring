@@ -8,9 +8,10 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
 /**
- * @Author: 杨锋
- * @DateTime: 2022/4/5 18:34
- * @Description: 自定义 BeanDefinition 的后置处理器，需要实现 BeanFactoryPostProcessor,同时需要将这个Bean对象注册到容器中
+ * @author : 杨锋
+ * @date : 2022/4/5 18:34
+ * 自定义 BeanDefinition 的后置处理器，需要实现 BeanFactoryPostProcessor,同时需要将这个Bean对象注册到容器中
+ * 需要添加入容器才会生效，或者使用ApplicationContext.addBeanFactoryPostProcessor(postProcessor);
  */
 
 public class MapleBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
