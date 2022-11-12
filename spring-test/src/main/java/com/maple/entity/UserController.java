@@ -10,8 +10,17 @@ import org.springframework.stereotype.Component;
  * desc:
  */
 
+//@DependsOn({"userServiceImpl01"})
 @Component
 public class UserController {
+
+	static {
+		System.out.println("发生类加载：UserController");
+	}
+
+	private String name;
+
+	private final Integer age = 20;
 
 	@Qualifier("userServiceImpl01")
 	@Autowired

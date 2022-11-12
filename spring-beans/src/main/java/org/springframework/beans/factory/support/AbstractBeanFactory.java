@@ -196,6 +196,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			String name, @Nullable Class<T> requiredType, @Nullable Object[] args, boolean typeCheckOnly)
 			throws BeansException {
 
+		// 转换bean的名字，如果是工厂bean（FactoryBean）去除工厂前缀【&】
 		String beanName = transformedBeanName(name);
 		Object bean;
 
@@ -212,7 +213,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					logger.debug("Returning cached instance of singleton bean '" + beanName + "'");
 				}
 			}
-			// 获取bean实例，如果是factoryBean，就返回getObject的对象。
+			// 获取bean实例，如果是factoryBean，就返回getObject的对象。【如果name加了&前缀，就直接返回FactoryBean对象（工厂bean对象）
 			bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
 		}
 
@@ -251,15 +252,19 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				checkMergedBeanDefinition(mbd, beanName, args);
 
 				// Guarantee initialization of beans that the current bean depends on.
+				// 保证实例化当前bean之前，先实例化DependsOn的Bean（先创建依赖实例）
 				String[] dependsOn = mbd.getDependsOn();
 				if (dependsOn != null) {
 					for (String dep : dependsOn) {
+						// 如果DependsOn尝试了循环依赖，直接报错
 						if (isDependent(beanName, dep)) {
 							throw new BeanCreationException(mbd.getResourceDescription(), beanName,
 									"Circular depends-on relationship between '" + beanName + "' and '" + dep + "'");
 						}
+						// 给beanName注册依赖，beanName依赖了dep，dep可能是beanName的字段
 						registerDependentBean(dep, beanName);
 						try {
+							// 先创建依赖实例
 							getBean(dep);
 						}
 						catch (NoSuchBeanDefinitionException ex) {
@@ -1600,12 +1605,12 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		// Now we have the bean instance, which may be a normal bean or a FactoryBean.
 		// If it's a FactoryBean, we use it to create a bean instance, unless the
 		// caller actually wants a reference to the factory.
-		// 如果是FactoryBean并且有【$】前缀，那么就直接返回单例池中的FactoryBean对象
+		// 如果是FactoryBean并且有【&】前缀，那么就直接返回单例池中的FactoryBean对象
 		if (!(beanInstance instanceof FactoryBean) || BeanFactoryUtils.isFactoryDereference(name)) {
 			return beanInstance;
 		}
 
-		// 是FactoryBean并且以[$]开头,那么就是获取	FactoryBean生产的对象
+		// 是FactoryBean并且以【&】开头,那么就是获取	FactoryBean生产的对象
 		Object object = null;
 		if (mbd == null) {
 			// 尝试从缓存中获取

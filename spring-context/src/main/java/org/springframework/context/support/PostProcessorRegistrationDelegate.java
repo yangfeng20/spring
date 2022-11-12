@@ -113,11 +113,13 @@ final class PostProcessorRegistrationDelegate {
 				}
 				sortPostProcessors(currentRegistryProcessors, beanFactory);
 				registryProcessors.addAll(currentRegistryProcessors);
+				// 调用BeanDefinitionRegistryPostProcessor的后置处理
 				invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
 				currentRegistryProcessors.clear();
 			}
 
 			// Now, invoke the postProcessBeanFactory callback of all processors handled so far.
+			// 调用BeanFactoryPostProcessor的后置处理方法，同样也是BeanDefinitionRegistryPostProcessor对象的
 			invokeBeanFactoryPostProcessors(registryProcessors, beanFactory);
 			invokeBeanFactoryPostProcessors(regularPostProcessors, beanFactory);
 		}
@@ -148,6 +150,7 @@ final class PostProcessorRegistrationDelegate {
 				orderedPostProcessorNames.add(ppName);
 			}
 			else {
+				// 添加没有排序要求的BeanFactoryPostProcessor
 				nonOrderedPostProcessorNames.add(ppName);
 			}
 		}
@@ -165,6 +168,7 @@ final class PostProcessorRegistrationDelegate {
 		invokeBeanFactoryPostProcessors(orderedPostProcessors, beanFactory);
 
 		// Finally, invoke all other BeanFactoryPostProcessors.
+		// 最后添加，执行没有排序要求的BeanFactoryPostProcessor
 		List<BeanFactoryPostProcessor> nonOrderedPostProcessors = new ArrayList<>();
 		for (String postProcessorName : nonOrderedPostProcessorNames) {
 			nonOrderedPostProcessors.add(beanFactory.getBean(postProcessorName, BeanFactoryPostProcessor.class));
