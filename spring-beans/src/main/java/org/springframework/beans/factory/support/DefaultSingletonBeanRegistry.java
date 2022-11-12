@@ -59,13 +59,23 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements SingletonBeanRegistry {
 
-	/** Cache of singleton objects: bean name --> bean instance */
+	/** Cache of singleton objects: bean name --> bean instance
+	 * <p></p>
+	 * 一级缓存，单例池；key：beanName，value：可以直接使用填充完属性的bean实例
+	 * */
 	private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
 
-	/** Cache of singleton factories: bean name --> ObjectFactory */
+	/** Cache of singleton factories: bean name --> ObjectFactory
+	 * <p></p>
+	 * 三级缓存，value是用于生成aop代理对象的lambda表达式。
+	 * */
 	private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
 
-	/** Cache of early singleton objects: bean name --> bean instance */
+	/** Cache of early singleton objects: bean name --> bean instance
+	 * <p></p>
+	 * 二级缓存，正在初始化的单例对象，可能是代理对象，也有可能是原始bean对象，如果出现了循环依赖，但是没有进行aop，就是为了提高性能；
+	 * 如果出现了循环依赖，并且进行了aop，就是为了解决多个对象的循环依赖不同代理对象赋值的问题
+	 * */
 	private final Map<String, Object> earlySingletonObjects = new HashMap<>(16);
 
 	/** Set of registered singletons, containing the bean names in registration order */
@@ -147,7 +157,9 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 		Assert.notNull(singletonFactory, "Singleton factory must not be null");
 		synchronized (this.singletonObjects) {
 			if (!this.singletonObjects.containsKey(beanName)) {
+				// 添加进三级缓存
 				this.singletonFactories.put(beanName, singletonFactory);
+				// 移除二级缓存
 				this.earlySingletonObjects.remove(beanName);
 				this.registeredSingletons.add(beanName);
 			}
@@ -171,6 +183,12 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	@Nullable
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
 		Object singletonObject = this.singletonObjects.get(beanName);
+		// 一级缓存中没有并且当前bean正在创建（也就是生命周期还没有走完）
+		// 例如一个【对象A】相互依赖【对象B】，先获取【对象a】，从调用本方法，现在【对象A】还没有被创建，所有第二个条件不能满足，走创建逻辑
+		// 【对象A】的实例化完成，添加进入三级缓存，填充属性【对象B】，调用本方法，获取不到，走创建逻辑，创建简单实例，添加进三级缓存
+		// 【对象B】需要填充属性【对象A】，调用本方法，由于【对象A】还没有创建完，现在第二个条件也就满足了，然后从二级缓存中获取【对象A】
+		// 二级缓存earlySingletonObjects中没有【对象A】,从三级缓存中获取,如果有Aop就创建Aop代理,拿到了【对象A】
+		// 【对象A】添加进二级缓存,删除在三级缓存中的实例,并将【对象B】的【对象A】属性赋值,【对象B】属性填充完成,回头执行【对象A】的属性赋值
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
 			synchronized (this.singletonObjects) {
 				singletonObject = this.earlySingletonObjects.get(beanName);
@@ -198,6 +216,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
 		Assert.notNull(beanName, "Bean name must not be null");
 		synchronized (this.singletonObjects) {
+			// 从一级缓存中获取数据【单例池】单例池中的对象一定是已经填充好属性可以直接使用的
 			Object singletonObject = this.singletonObjects.get(beanName);
 			if (singletonObject == null) {
 				if (this.singletonsCurrentlyInDestruction) {
@@ -217,6 +236,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					this.suppressedExceptions = new LinkedHashSet<>();
 				}
 				try {
+					// 调用lambda创建bean 【()->return createBean(beanName, mbd, args);】
 					singletonObject = singletonFactory.getObject();
 					newSingleton = true;
 				}

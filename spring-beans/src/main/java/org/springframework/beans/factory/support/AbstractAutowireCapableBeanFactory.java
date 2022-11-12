@@ -494,7 +494,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
 		}
 		if (instanceWrapper == null) {
-			// 实例化Bean
+			// 实例化Bean【只是创建了对象】
 			instanceWrapper = createBeanInstance(beanName, mbd, args);
 		}
 		Object bean = instanceWrapper.getWrappedInstance();
@@ -519,14 +519,16 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		// Eagerly cache singletons to be able to resolve circular references
 		// even when triggered by lifecycle interfaces like BeanFactoryAware.
-		// 暴露bean，解决循环依赖
 		boolean earlySingletonExposure = (mbd.isSingleton() && this.allowCircularReferences &&
 				isSingletonCurrentlyInCreation(beanName));
+		// 上述条件：当前bean是单例的，并且允许循环依赖，并且当前bean正在被创建中，就会添加到三级缓存中
+		// 提前暴露Bean，解决循环依赖
 		if (earlySingletonExposure) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Eagerly caching bean '" + beanName +
 						"' to allow for resolving potential circular references");
 			}
+			// 此时的bean还只是刚刚创建处理的简单对象，还没有属性赋值，第二个lambda参数是用于产生代理对象的，也可能不会生成代理对象，根据天健判断
 			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
 		}
 
@@ -863,6 +865,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			for (BeanPostProcessor bp : getBeanPostProcessors()) {
 				if (bp instanceof SmartInstantiationAwareBeanPostProcessor) {
 					SmartInstantiationAwareBeanPostProcessor ibp = (SmartInstantiationAwareBeanPostProcessor) bp;
+					// 获取早期的引用，也就是还没有属性赋值的对象引用，最终也一直是这个对象引用。
+					// 用于生成代理对象AbstractAutoProxyCreator.getEarlyBeanReference
 					exposedObject = ibp.getEarlyBeanReference(exposedObject, beanName);
 				}
 			}
