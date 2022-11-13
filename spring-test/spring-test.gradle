@@ -10,6 +10,8 @@ dependencyManagement {
 dependencies {
 	// 添加lombok依赖
 	compile group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
+	// tomcat依赖
+	compile group: 'org.apache.tomcat.embed', name:'tomcat-embed-core', version: '8.5.45'
 	compile(project(":spring-core"))
 	optional(project(":spring-aop"))
 	optional(project(":spring-beans"))
