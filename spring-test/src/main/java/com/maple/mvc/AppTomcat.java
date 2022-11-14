@@ -1,34 +1,58 @@
 package com.maple.mvc;
 
-import com.maple.mvc.servlet.HelloServlet;
-import org.apache.catalina.LifecycleException;
+import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.catalina.webresources.DirResourceSet;
+import org.apache.catalina.webresources.StandardRoot;
+
+import java.io.File;
 
 public class AppTomcat {
-    public static void main(String[] args) throws LifecycleException {
-        // 创建Tomcat应用对象
-        Tomcat tomcat = new Tomcat();
-        // 设置Tomcat的端口号
-        tomcat.setPort(8080);
-        // 是否设置Tomcat自动部署
-        tomcat.getHost().setAutoDeploy(false);
-        // 创建上下文
-        StandardContext standardContext = new StandardContext();
-        // 设置项目名
-        standardContext.setPath("/sb");
-        // 监听上下文
-        standardContext.addLifecycleListener(new Tomcat.FixContextListener());
-        // 向tomcat容器对象添加上下文配置
-        tomcat.getHost().addChild(standardContext);
+	// 端口号
+	private static int port = 8080;
 
-        //// 创建Servlet
-        tomcat.addServlet("/hello", "helloword", new HelloServlet());
-        // Servlet映射
-        standardContext.addServletMappingDecoded("/hello", "helloword");
-        //启动tomcat容器
-        tomcat.start();
-        //等待
-        tomcat.getServer().await();
-    }
+
+	public static void main(String[] args) {
+		start();
+	}
+
+	private static void start() {
+		try {
+			// TODO Auto-generated method stub
+			// 创建Tomcat服务器
+			Tomcat tomcat = new Tomcat();
+			// 设置端口号
+			tomcat.setPort(port);
+			tomcat.getHost().setAutoDeploy(false);
+
+			// 创建Context上下文
+			// 读取项目路径
+			StandardContext ctx = (StandardContext) tomcat.addWebapp("/", new File("spring-test/out/production/resources").getAbsolutePath());
+			// 禁止重新载入
+			ctx.setReloadable(false);
+
+			// class文件读取地址
+			File additionWebInfClasses = new File("target/classes");
+			// 创建WebRoot
+			WebResourceRoot resources = new StandardRoot(ctx);
+			// tomcat内部读取Class执行
+			resources.addPreResources(
+					new DirResourceSet(resources, "/WEB-INF/classes", additionWebInfClasses.getAbsolutePath(), "/"));
+
+
+			tomcat.start();
+			System.out.println("tomcat启动成功...");
+
+
+			// 服务阻塞等待
+			tomcat.getServer().await();
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("tomcat启动失败...");
+		}
+	}
+
 }

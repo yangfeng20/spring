@@ -20,6 +20,8 @@ include "spring-webmvc"
 include "spring-webflux"
 include "spring-websocket"
 include "spring-framework-bom"
+// 自己的测试的mvc模块
+include 'spring-z-maple-mvc'
 
 // Exposes gradle buildSrc for IDE support
 include "buildSrc"

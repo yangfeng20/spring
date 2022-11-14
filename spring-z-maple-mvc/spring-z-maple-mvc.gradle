@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+    id 'war'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
+    testCompile 'junit:junit:4.12'
+
+    // 添加lombok依赖
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
+    // tomcat依赖
+    compile group: 'org.apache.tomcat.embed', name:'tomcat-embed-core', version: '8.5.45'
+    compile(project(":spring-core"))
+    optional(project(":spring-aop"))
+    optional(project(":spring-beans"))
+    optional(project(":spring-context"))
+    optional(project(":spring-jdbc"))
+    optional(project(":spring-orm"))
+    optional(project(":spring-tx"))
+    optional(project(":spring-web"))
+    optional(project(":spring-webmvc"))
+}
