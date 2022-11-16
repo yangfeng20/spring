@@ -29,6 +29,13 @@ import java.util.Set;
 
 public class MapleWebAppInitializer implements WebApplicationInitializer {
 
+
+	/**
+	 * 在启动时
+	 * 主要作用是创建spring容器，创建springMvc容器，注册DispatcherServlet
+	 *
+	 * @param container 容器
+	 */
 	@Override
 	public void onStartup(ServletContext container) {
 		// Create the 'root' Spring application context
