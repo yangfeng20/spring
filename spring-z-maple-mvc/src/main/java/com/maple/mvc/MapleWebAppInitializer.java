@@ -39,7 +39,8 @@ public class MapleWebAppInitializer implements WebApplicationInitializer {
 	@Override
 	public void onStartup(ServletContext container) {
 		// Create the 'root' Spring application context
-		// 创建spring的容器对象【主要是加载根配置类，往spring中加载配置类】
+		// 其实也是可以不创建父容器的，也是可以启动运行的
+		// 创建spring的容器对象【主要是加载根配置类，往spring中加载配置类】refresh方法在全局上下文对象初始化时调用
 		AnnotationConfigWebApplicationContext rootApplicationContext = new AnnotationConfigWebApplicationContext();
 		rootApplicationContext.register(RootConfig.class);
 
@@ -48,7 +49,7 @@ public class MapleWebAppInitializer implements WebApplicationInitializer {
 		container.addListener(new ContextLoaderListener(rootApplicationContext));
 
 		// Create the dispatcher servlet's Spring application context
-		// 创建web容器，并加载web配置文件
+		// 创建web容器，并加载web配置文件  refresh方法在DispatcherServlet的init方法中被调用
 		AnnotationConfigWebApplicationContext webApplicationContext = new AnnotationConfigWebApplicationContext();
 		webApplicationContext.register(WebConfig.class);
 
