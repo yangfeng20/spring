@@ -303,6 +303,7 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 			return addCandidateComponentsFromIndex(this.componentsIndex, basePackage);
 		}
 		else {
+			// note 扫描候选组件【加了@Component注解的类】
 			return scanCandidateComponents(basePackage);
 		}
 	}
@@ -425,9 +426,12 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 				if (resource.isReadable()) {
 					try {
 						MetadataReader metadataReader = getMetadataReaderFactory().getMetadataReader(resource);
+						// note 通过asm在不加载类的情况下判断该类是否为候选组件@Component，并和@Conditional对比是否匹配
 						if (isCandidateComponent(metadataReader)) {
+							// 这里是使用的注解方式的启动类，所有BeanDefinition的类型为【ScannedGenericBeanDefinition】
 							ScannedGenericBeanDefinition sbd = new ScannedGenericBeanDefinition(metadataReader);
 							sbd.setSource(resource);
+							// note BeanDefinition检查是否符合条件【如果是接口或者是抽象类，加了@Component也没有效果，返回false，跳过】
 							if (isCandidateComponent(sbd)) {
 								if (debugEnabled) {
 									logger.debug("Identified candidate component class: " + resource);
@@ -490,8 +494,11 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 				return false;
 			}
 		}
+
+		// note 是否包含应该扫描的注解
 		for (TypeFilter tf : this.includeFilters) {
 			if (tf.match(metadataReader, getMetadataReaderFactory())) {
+				// note Condition条件
 				return isConditionMatch(metadataReader);
 			}
 		}
