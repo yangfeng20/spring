@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+    id 'war'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+    // 添加lombok依赖
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
+    // aspectJ依赖
+    compile group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.2'
+    compile(project(":spring-core"))
+    optional(project(":spring-aop"))
+    optional(project(":spring-beans"))
+    optional(project(":spring-context"))
+}

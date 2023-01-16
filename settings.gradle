@@ -22,6 +22,7 @@ include "spring-websocket"
 include "spring-framework-bom"
 // 自己的测试的mvc模块
 include 'spring-z-maple-mvc'
+include 'spring-z-maple-test'
 
 // Exposes gradle buildSrc for IDE support
 include "buildSrc"
